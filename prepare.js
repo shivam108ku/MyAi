@@ -7,12 +7,12 @@ export async function indexTheDocument(filePath){
     const document = doc[0].pageContent;
 
     const textSplitter = new RecursiveCharacterTextSplitter({
-    chunkSize: 100,
-    chunkOverlap: 50,
+    chunkSize: 200,
+    chunkOverlap: 70,
   });
 
   const texts = await textSplitter.splitText(document);
-  console.log(texts);
+  console.log(texts.length);
 
 }
 
