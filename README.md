@@ -21,7 +21,7 @@ The Google Calendar Agent can:
 - Handle follow-up conversation context
 
 Example prompts:
-- "Kal 4 baje team sync schedule karo."
+- "Schedule a team sync tomorrow at 4:00 PM."
 - "Move my 5 PM meeting to 6:30 PM."
 - "What is on my calendar for next Monday?"
 - "Find a 30-minute free slot between 2 and 6 PM."
