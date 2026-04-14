@@ -1,133 +1,196 @@
-# AnswerDock
+# Google Calendar Agent
 
-A fast, AI-powered research assistant built with the MERN stack.
+An advanced AI agent project that helps you manage Google Calendar using natural language.
 
-AnswerDock is a Perplexity-inspired web app where users can ask questions, get grounded answers, and explore sources in a clean chat interface.
+This project is designed for real-world use with:
+- **DeepSeek AI** as the LLM brain
+- **LangChain** for tool orchestration and integrations
+- **LangGraph** for stateful, multi-step agent workflows
+- **Google Calendar API** for secure calendar operations
 
-## Why This Project
+---
 
-Most AI chat apps give answers without enough context.
+## What This Project Does
 
-AnswerDock is designed to be:
-- Source-aware
-- Fast and minimal
-- Easy to scale and customize
+The Google Calendar Agent can:
+- Create events from natural language prompts
+- Update and reschedule existing events
+- Cancel events safely with confirmation
+- List upcoming events with smart summaries
+- Suggest best meeting slots
+- Handle follow-up conversation context
 
-## Core Features (Planned)
+Example prompts:
+- "Kal 4 baje team sync schedule karo."
+- "Move my 5 PM meeting to 6:30 PM."
+- "What is on my calendar for next Monday?"
+- "Find a 30-minute free slot between 2 and 6 PM."
 
-- AI chat interface with conversation history
-- Source-backed answers (links + snippets)
-- Follow-up questions in the same thread
-- User authentication (JWT)
-- Saved chats and bookmarks
-- Search history and user dashboard
-- Markdown rendering in answers
-- Streaming responses for better UX
+---
 
-## Tech Stack
+## Why This Project (Real-World Focus)
 
-### Frontend
-- React
-- Vite
-- Tailwind CSS
-- Axios
-- React Router
+Most demo agents stop at simple Q&A.  
+This project focuses on production-style concerns:
+- Stateful workflow control (not just single-shot calls)
+- Tool reliability and fallback handling
+- Confirmation steps for destructive actions
+- Structured logs and observability
+- Easy extension for CRM, Slack, Email, and more
 
-### Backend
-- Node.js
-- Express.js
-- MongoDB + Mongoose
-- JWT Authentication
-- Bcrypt
+---
 
-### AI + Search Layer
-- LLM provider API (OpenAI / Gemini / Claude)
-- Optional web search provider integration
+## Core Tech Stack
 
-## Project Structure
+### AI + Agent Layer
+- **DeepSeek** (chat/completion model)
+- **LangChain** (tool calling, prompt templates, memory adapters)
+- **LangGraph** (agent state machine, branching, retries, guardrails)
+
+### Integration Layer
+- **Google Calendar API**
+- **Google OAuth 2.0**
+
+### Backend (recommended)
+- **Node.js** + **TypeScript**
+- **Express** or **Fastify**
+
+### Data + Infra (recommended)
+- **Redis** (short-term memory, cache, queues)
+- **PostgreSQL / MongoDB** (user, sessions, logs)
+- **Docker** (deployment consistency)
+
+---
+
+## High-Level Architecture (Visual)
+
+```mermaid
+flowchart LR
+    U[User: Web/App/CLI] --> A[API Gateway / Backend]
+    A --> O[OAuth 2.0 Service]
+    A --> G[LangGraph Orchestrator]
+    G --> L[DeepSeek via LangChain]
+    G --> T[Calendar Tools]
+    T --> C[Google Calendar API]
+    G --> M[(Memory/State Store)]
+    G --> X[(Observability & Logs)]
+    C --> G
+    G --> A
+    A --> U
+```
+
+---
+
+## Agent Workflow (Visual)
+
+```mermaid
+stateDiagram-v2
+    [*] --> ParseIntent
+    ParseIntent --> Clarify: Missing details
+    ParseIntent --> PlanAction: Intent clear
+    Clarify --> PlanAction
+    PlanAction --> ConfirmRisk: update/delete action
+    PlanAction --> Execute: safe read action
+    ConfirmRisk --> Execute: user confirmed
+    Execute --> ValidateResult
+    ValidateResult --> Retry: transient error
+    Retry --> Execute
+    ValidateResult --> Respond
+    Respond --> [*]
+```
+
+---
+
+## Recommended Project Structure
 
 ```text
 .
-├── client/                # React frontend
-│   ├── src/
-│   ├── public/
-│   └── package.json
-├── server/                # Express backend
-│   ├── src/
-│   │   ├── config/
-│   │   ├── controllers/
-│   │   ├── middleware/
-│   │   ├── models/
-│   │   ├── routes/
-│   │   ├── services/
-│   │   └── index.js
-│   └── package.json
+├── apps/
+│   ├── api/                      # Backend API service
+│   └── web/                      # Optional frontend dashboard
+├── packages/
+│   ├── agent-core/               # LangGraph workflows + agent logic
+│   ├── integrations-google/      # Calendar API + OAuth helpers
+│   ├── prompts/                  # Prompt templates
+│   └── shared/                   # Shared types, constants, utils
+├── infra/
+│   ├── docker/
+│   └── monitoring/
 ├── .env.example
-├── .gitignore
+├── docker-compose.yml
 └── README.md
 ```
 
-## Getting Started
+---
 
-### 1) Clone the Repository
+## Setup Guide
+
+## 1) Clone
 
 ```bash
-git clone https://github.com/your-username/answerdock.git
-cd answerdock
+git clone https://github.com/your-username/google-calendar-agent.git
+cd google-calendar-agent
 ```
 
-### 2) Install Dependencies
+## 2) Install Dependencies
 
 ```bash
-# Install client dependencies
-cd client
-npm install
-
-# Install server dependencies
-cd ../server
 npm install
 ```
 
-### 3) Environment Variables
+## 3) Configure Environment
 
-Create a `.env` file inside the `server` folder:
+Create `.env` in root:
 
 ```env
+# App
+NODE_ENV=development
 PORT=5000
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret
-AI_API_KEY=your_ai_provider_key
-CLIENT_URL=http://localhost:5173
+
+# DeepSeek
+DEEPSEEK_API_KEY=your_deepseek_api_key
+DEEPSEEK_MODEL=deepseek-chat
+
+# Google OAuth
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GOOGLE_REDIRECT_URI=http://localhost:5000/auth/google/callback
+
+# Calendar
+GOOGLE_CALENDAR_ID=primary
+DEFAULT_TIMEZONE=Asia/Kolkata
+
+# Storage
+DATABASE_URL=your_database_url
+REDIS_URL=redis://localhost:6379
 ```
 
-### 4) Run the App
+## 4) Google Cloud Configuration
 
-In one terminal:
+1. Create a project in Google Cloud Console  
+2. Enable **Google Calendar API**  
+3. Configure OAuth Consent Screen  
+4. Create OAuth credentials (Web application)  
+5. Add redirect URI from your `.env`  
+
+## 5) Run Development Server
 
 ```bash
-cd server
 npm run dev
 ```
 
-In another terminal:
+---
 
-```bash
-cd client
-npm run dev
-```
+## Example API Contract
 
-Frontend: `http://localhost:5173`  
-Backend: `http://localhost:5000`
-
-## API Preview (Example)
-
-### POST `/api/chat/ask`
+### POST `/api/agent/chat`
 
 Request:
 
 ```json
 {
-  "question": "What are the latest trends in edge AI?"
+  "userId": "user_123",
+  "message": "Schedule product demo tomorrow at 3 PM for 45 minutes with Rahul"
 }
 ```
 
@@ -135,39 +198,62 @@ Response:
 
 ```json
 {
-  "answer": "Edge AI is moving toward...",
-  "sources": [
-    {
-      "title": "Research Paper",
-      "url": "https://example.com"
-    }
-  ]
+  "status": "success",
+  "intent": "create_event",
+  "result": {
+    "eventId": "abc123",
+    "title": "Product demo with Rahul",
+    "start": "2026-04-15T15:00:00+05:30",
+    "end": "2026-04-15T15:45:00+05:30"
+  },
+  "message": "Done. I scheduled it on your primary calendar."
 }
 ```
 
+---
+
+## Safety and Guardrails
+
+- Confirm before delete/cancel operations
+- Validate date/time and timezone before writing events
+- Log all tool actions with request IDs
+- Graceful retries for temporary API failures
+- Role-based access controls for team environments
+
+---
+
 ## Roadmap
 
-- RAG pipeline for better factual grounding
-- Multi-model switching
-- Citation confidence scoring
-- Workspace/team support
-- Export to PDF/Markdown
-- Dark mode + accessibility pass
+- Multi-calendar support (work/personal/resource calendars)
+- Recurring event intelligence
+- Meeting conflict auto-resolution
+- Email + Slack notification hooks
+- Voice input + multilingual command support
+- Admin analytics dashboard
+
+---
 
 ## Contributing
 
-Contributions are welcome.
-
-1. Fork the project
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m "Add amazing feature"`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
+1. Fork this repository
+2. Create a feature branch (`git checkout -b feature/your-feature`)
+3. Commit your changes (`git commit -m "Add your feature"`)
+4. Push your branch (`git push origin feature/your-feature`)
 5. Open a Pull Request
+
+---
 
 ## License
 
-This project is licensed under the MIT License.
+MIT License
 
-## Author
+---
 
-Built by you. Ship fast.
+## Author Note
+
+Built for advanced, real-world AI agent engineering.  
+If you want, I can also generate:
+- complete backend boilerplate,
+- LangGraph workflow starter code,
+- DeepSeek + Google Calendar integration scaffolding,
+- and deployment setup (Docker + cloud).
