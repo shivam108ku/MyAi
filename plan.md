@@ -1,3 +1,0 @@
-#Project plan
-
-[] Project setup
