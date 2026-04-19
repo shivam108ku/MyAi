@@ -13,20 +13,19 @@ const model = new ChatDeepSeek({
 
 // Assitant Node
 
-async function callModel(state: typeof MessagesAnnotation.State ) {
+async function callModel(state: typeof MessagesAnnotation.State) {
   console.log("Calling the llm");
   const response = await model.invoke(state.messages);
   console.log("Response", response);
   return { messages: response };
 }
 
-
 // Tool Node
 const toolNode = new ToolNode(tools);
 
 // Build The Graph
 
-function shouldContinue(state: typeof MessagesAnnotation.State ) {
+function shouldContinue(state: typeof MessagesAnnotation.State) {
   const lastMessage = state.messages[state.messages.length - 1] as AIMessage;
   console.log("lastMessage", lastMessage);
 
@@ -34,7 +33,7 @@ function shouldContinue(state: typeof MessagesAnnotation.State ) {
     return "tools";
   }
 
-  return '__end__';
+  return "__end__";
 }
 
 const graph = new StateGraph(MessagesAnnotation)
@@ -42,7 +41,20 @@ const graph = new StateGraph(MessagesAnnotation)
   .addNode("tools", toolNode)
   .addEdge("__start__", "assistant")
   .addConditionalEdges("assistant", shouldContinue, {
-    "__end__": END,
+    __end__: END,
     tools: "tools",
-  })
- 
+  });
+
+const app = graph.compile();
+
+async function main() {
+  const result = await app.invoke({
+    messages: [
+      { role: "user", content: "Hi"},
+    ],
+  });
+
+  console.log("Ai", result.messages[result.messages.length - 1]?.content);
+}
+
+main();
