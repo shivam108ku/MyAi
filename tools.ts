@@ -11,3 +11,22 @@ export const createEventTool = tool(
     schema: z.object({}),
   }
 );
+
+export const getEventsTool = tool(
+  async () => {
+    return JSON.stringify([
+        {
+            title: 'Met3eing with me',
+            date: '9th Aug 2025',
+            time: '2 PM',
+            location: 'Gmeet',
+        },
+    
+    ])
+  },
+  {
+    name: 'get-events',
+    description: 'Call to create the calendar events',
+    schema: z.object({}),
+  }
+);
