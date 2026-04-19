@@ -16,7 +16,6 @@ const model = new ChatDeepSeek({
 async function callModel(state: typeof MessagesAnnotation.State) {
   console.log("Calling the llm");
   const response = await model.invoke(state.messages);
-  console.log("Response", response);
   return { messages: response };
 }
 
@@ -27,7 +26,7 @@ const toolNode = new ToolNode(tools);
 
 function shouldContinue(state: typeof MessagesAnnotation.State) {
   const lastMessage = state.messages[state.messages.length - 1] as AIMessage;
-  console.log("lastMessage", lastMessage);
+
 
   if (lastMessage.tool_calls?.length) {
     return "tools";
