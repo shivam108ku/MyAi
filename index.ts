@@ -38,7 +38,7 @@ function shouldContinue(state: typeof MessagesAnnotation.State) {
 const graph = new StateGraph(MessagesAnnotation)
   .addNode("assistant", callModel)
   .addNode("tools", toolNode)
-  .addEdge("__start__", "assistant")
+  .addEdge("__start__", "assistant") 
   .addConditionalEdges("assistant", shouldContinue, {
     __end__: END,
     tools: "tools",
