@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "start": "bun run index.ts"
+    "start": "bun run server.ts"
   },
   "devDependencies": {
     "@langchain/core": "^1.1.39",
@@ -21,6 +21,7 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "express": "^5.2.1",
     "googleapis": "^171.4.0"
   }
 }

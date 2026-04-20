@@ -22,14 +22,21 @@ app.get("/auth", (req, res) => {
 
   console.log(url);
 
-  // generate link
-  const link = "";
-  res.redirect(link);
+  // generate link 
+  res.redirect(url);
 });
 
-app.get("/callback", (req, res) => {
+app.get("/callback", async (req, res) => {
   // generate link
-  const code = req.query.code;
+  const code = req.query.code as string;
+
+  const { tokens } = await oauth2Client.getToken(code);
+  console.log(tokens);
+  // oauth2Client.setCredentials(tokens);
 
   res.send("Connected you can close the tab now");
 });
+
+app.listen(3600,()=>{
+    console.log("Server is running on port 3600");
+})
