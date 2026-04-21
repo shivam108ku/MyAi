@@ -49,7 +49,7 @@ const app = graph.compile();
 async function main() {
   const result = await app.invoke({
     messages: [
-      { role: "user", content: "Hi"},
+      { role: "user", content: "Do i have any metting today ?"},
     ],
   });
 
