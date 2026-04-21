@@ -13,23 +13,50 @@ oauth2Client.setCredentials(tokens);
 
 const calendar = google.calendar({ version: "v3", auth: oauth2Client });
 
+type Params = {
+  q: string;
+  timeMin: string;
+  timeMax: string;
+}
+
 export const getEventsTool = tool(
-  async (params) => {
+  async (params: Params) => {
 
     const {q, timeMin, timeMax} = params;
+    console.log(params)
 
     try {
       const res = await calendar.events.list({
         calendarId: "primary",
+        q: q,
+        timeMin,
+        timeMax,
       });
-      console.log("response -->", res.data.items);
+      
+
+      const result = res.data.items?.map(event => {
+        return {
+          id: event.id,
+          summary: event.summary,
+          status: event.status,
+          organiser: event.organizer,
+          start: event.start,
+          end: event.end,
+          attendees: event.attendees,
+          meetingLink: event.hangoutLink,
+          eventType: event.eventType,
+        }
+      }) 
+
+      console.log("result-->", result);
+
     } catch (err) {
       console.log("Error", err);
     }
 
     return JSON.stringify([
       {
-        title: "Met3eing with me",
+        title: "Meeting with me",
         date: "9th Aug 2025",
         time: "2 PM",
         location: "Gmeet",
