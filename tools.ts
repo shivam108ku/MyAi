@@ -14,10 +14,13 @@ oauth2Client.setCredentials(tokens);
 const calendar = google.calendar({ version: "v3", auth: oauth2Client });
 
 export const getEventsTool = tool(
-  async () => {
+  async (params) => {
+
+    const {q, timeMin, timeMax} = params;
+
     try {
       const res = await calendar.events.list({
-        calendarId: "shivam108ku@gmail.com",
+        calendarId: "primary",
       });
       console.log("response -->", res.data.items);
     } catch (err) {
@@ -35,8 +38,16 @@ export const getEventsTool = tool(
   },
   {
     name: "get-events",
-    description: "Call to create the calendar events",
-    schema: z.object({}),
+    description: "Call to get the calendar events",
+    schema: z.object({
+      q:z
+       .string()
+       .describe(
+        "The query to be used to get events from google calendar. It can be one of these values: summary, description,location, attendees display name, attendees email, organiser's name, organiser's email",
+       ),
+       timeMin: z.string().describe("The from datetime in UTC format for the event"),
+       timeMax: z.string().describe("The to datetime in UTC format for the event"),
+    }),
   },
 );
 
