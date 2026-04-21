@@ -8,7 +8,7 @@ const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_SECRET,
   process.env.GOOGLE_REDIRECT_URL,
 );
-
+ 
 oauth2Client.setCredentials(tokens);
 
 const calendar = google.calendar({ version: "v3", auth: oauth2Client });
@@ -17,39 +17,37 @@ type Params = {
   q: string;
   timeMin: string;
   timeMax: string;
-}
+};
 
 export const getEventsTool = tool(
-  async (params: Params) => {
-
-    const {q, timeMin, timeMax} = params;
-    console.log(params)
+  async (params) => {
+    console.log("Params", params)
+    const { q, timeMin, timeMax } = params as Params;
 
     try {
-      const res = await calendar.events.list({
+      const response = await calendar.events.list({
         calendarId: "primary",
         q: q,
         timeMin,
         timeMax,
       });
-      
+      console.log("response", response.data.items);
 
-      const result = res.data.items?.map(event => {
-        return {
-          id: event.id,
-          summary: event.summary,
-          status: event.status,
-          organiser: event.organizer,
-          start: event.start,
-          end: event.end,
-          attendees: event.attendees,
-          meetingLink: event.hangoutLink,
-          eventType: event.eventType,
-        }
-      }) 
+     const result = response.data.items?.map((event) => {
+                return {
+                    id: event.id,
+                    summary: event.summary,
+                    status: event.status,
+                    organiser: event.organizer,
+                    start: event.start,
+                    end: event.end,
+                    attendees: event.attendees,
+                    meetingLink: event.hangoutLink,
+                    eventType: event.eventType,
+                };
+            });
 
-      console.log("result-->", result);
-
+       console.log("result-->", result);
     } catch (err) {
       console.log("Error", err);
     }
@@ -65,15 +63,19 @@ export const getEventsTool = tool(
   },
   {
     name: "get-events",
-    description: "Call to get the calendar events",
+    description: "Call to get the calendar events.",
     schema: z.object({
-      q:z
-       .string()
-       .describe(
-        "The query to be used to get events from google calendar. It can be one of these values: summary, description,location, attendees display name, attendees email, organiser's name, organiser's email",
-       ),
-       timeMin: z.string().describe("The from datetime in UTC format for the event"),
-       timeMax: z.string().describe("The to datetime in UTC format for the event"),
+      q: z
+        .string()
+        .describe(
+          "The query to be used to get events from google calendar. It can be one of these values: summary, description, location, attendees display name, attendees email, organiser's name, organiser's email",
+        ),
+      timeMin: z
+        .string()
+        .describe("The from datetime to get event"),
+      timeMax: z
+        .string()
+        .describe("The to datetime in to get event"),
     }),
   },
 );

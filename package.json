@@ -4,7 +4,8 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "start": "bun run server.ts"
+    "start": "bun run server.ts",
+    "chat": "bun run index.ts"
   },
   "devDependencies": {
     "@langchain/core": "^1.1.39",
