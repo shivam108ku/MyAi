@@ -19,8 +19,28 @@ type Params = {
   timeMax: string;
 };
 
+
+
+type attendee = {
+  email: string;
+  displayName: string;
+};
+
+type Eventdata = {
+  summary: string;
+  start: {
+    dateTime: string;
+    timeZone: string;
+  };
+  end: {
+    dateTime: string;
+    timeZone: string;
+  };
+  attendees: [];
+};
+
 export const getEventsTool = tool(
-  async (params) => { 
+  async (params) => {
     const { q, timeMin, timeMax } = params as Params;
 
     try {
@@ -29,7 +49,7 @@ export const getEventsTool = tool(
         q: q,
         timeMin,
         timeMax,
-      }); 
+      });
 
       const result = response.data.items?.map((event) => {
         return {
@@ -45,11 +65,10 @@ export const getEventsTool = tool(
         };
       });
       return JSON.stringify(result);
-
     } catch (err) {
       console.log("Error", err);
     }
-    return "Failed to connect your calendar"
+    return "Failed to connect your calendar";
   },
   {
     name: "get-events",
@@ -67,12 +86,39 @@ export const getEventsTool = tool(
 );
 
 export const createEventTool = tool(
-  async () => {
-    return "The meeting has been created";
+  async (eventData) => {
+    console.log("eventdata-->",eventData)
+    const  { summary, start, end, attendees } = eventData as Eventdata;
+
+    const response = await calendar.events.insert({
+      calendarId: "primary",
+      sendUpdates: "all",
+      conferenceDataVersion: 1,
+      requestBody: {
+        summary ,
+        start ,
+        end ,
+        attendees ,
+        conferenceData: {
+          createRequest: {
+            requestId: crypto.randomUUID(),
+            conferenceSolutionKey: {
+              type: 'hangoutsMeet',
+            }
+          }
+        }
+      },
+    });
+
+    if(response.statusText === 'OK'){
+      return "The meeting has been created";
+    }
+    return "Meeting is not  created";
+    
   },
   {
     name: "create-events",
     description: "Call to the calendar events",
-    schema: z.object({}),
-  },
+    schema:'',
+  }
 );

@@ -52,7 +52,7 @@ async function main() {
       },
       {
         role: "user",
-        content: "Do i have any test event?",
+        content: "can you create a meeting with Atik(rku7693@gmail.com) today at 20PM about game? ",
       },
     ],
   });
