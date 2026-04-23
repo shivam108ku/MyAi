@@ -19,25 +19,42 @@ type Params = {
   timeMax: string;
 };
 
-
+const createEventSchema = z.object({
+      summary: z.string().describe("The tittle of the event"),
+      start: z.object({
+        dateTime: z.string().describe("The start date time of the event in UTC"),
+        timeZone: z.string().describe("The timeZone of the event time in UTC"),
+      }),
+       end: z.object({
+        dateTime: z.string().describe("The end date time of the event in UTC"),
+        timeZone: z.string().describe("The timeZone of the event time in UTC"),
+      }),
+      attendees: z.array(z.object({
+        email: z.string().describe("The email of the attendee"),
+        displayName: z.string().describe("The name of the attendee"),
+      }))
+    })
 
 type attendee = {
   email: string;
   displayName: string;
 };
 
-type Eventdata = {
-  summary: string;
-  start: {
-    dateTime: string;
-    timeZone: string;
-  };
-  end: {
-    dateTime: string;
-    timeZone: string;
-  };
-  attendees: [];
-};
+// type Eventdata = {
+//   summary: string;
+//   start: {
+//     dateTime: string;
+//     timeZone: string;
+//   };
+//   end: {
+//     dateTime: string;
+//     timeZone: string;
+//   };
+//   attendees: [];
+// };
+
+type Eventdata = z.infer<typeof createEventSchema>;
+
 
 export const getEventsTool = tool(
   async (params) => {
@@ -119,6 +136,6 @@ export const createEventTool = tool(
   {
     name: "create-events",
     description: "Call to the calendar events",
-    schema:'',
+    schema:createEventSchema,
   }
 );

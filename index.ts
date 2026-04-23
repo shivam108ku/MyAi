@@ -52,7 +52,8 @@ async function main() {
       },
       {
         role: "user",
-        content: "can you create a meeting with Atik(rku7693@gmail.com) today at 20PM about game? ",
+        // content: "can you create a meeting with Atik(rku7693@gmail.com) today at 2PM about game? ",
+         content: "Do i have any metting today ?",
       },
     ],
   });
