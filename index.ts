@@ -62,13 +62,16 @@ async function main() {
     if (userInput === "/bye") {
       break;
     }
-    const now = new Date().toISOString();
+    const now = new Date().toLocaleString("sv-SE").replace(" ","T");
+    const timeZoneString = Intl.DateTimeFormat().resolvedOptions().timeZone
 
     const result = await app.invoke({
       messages: [
         {
           role: "system",
-          content: `Current datetime: ${now}`,
+          content: `You are a smart personal assitant 
+                    Current datetime: ${now} 
+                    Current timezone string: ${timeZoneString}`,
         },
         {
           role: "user",

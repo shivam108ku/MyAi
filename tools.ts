@@ -22,12 +22,12 @@ type Params = {
 const createEventSchema = z.object({
       summary: z.string().describe("The tittle of the event"),
       start: z.object({
-        dateTime: z.string().describe("The start date time of the event in UTC"),
-        timeZone: z.string().describe("The timeZone of the event time in UTC"),
+        dateTime: z.string().describe("The date time of start of the event."),
+        timeZone: z.string().describe("Current IANA timeZone string."),
       }),
        end: z.object({
-        dateTime: z.string().describe("The end date time of the event in UTC"),
-        timeZone: z.string().describe("The timeZone of the event time in UTC"),
+        dateTime: z.string().describe("The date time of end of the event in"),
+        timeZone: z.string().describe("Current IANA timeZone string"),
       }),
       attendees: z.array(z.object({
         email: z.string().describe("The email of the attendee"),
@@ -97,7 +97,7 @@ export const getEventsTool = tool(
           "The query to be used to get events from google calendar. It can be one of these values: summary, description, location, attendees display name, attendees email, organiser's name, organiser's email",
         ),
       timeMin: z.string().describe("The from datetime to get event"),
-      timeMax: z.string().describe("The to datetime in to get event"),
+      timeMax: z.string().describe("The to datetime to get event"),
     }),
   },
 );
