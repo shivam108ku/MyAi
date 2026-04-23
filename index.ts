@@ -48,19 +48,11 @@ async function main() {
     messages: [
       {
         role: "system",
-        content: `You are a helpful calendar assistant.
-Current datetime: ${now}
-Default timezone: Asia/Kolkata.
-
-Important rules:
-- Do not ask the user for timezone unless they explicitly ask to use another timezone.
-- Assume all relative dates like "today", "tomorrow", "this week" are in Asia/Kolkata.
-- When the user asks to check meetings/events/calendar, use the appropriate tool.
-- For "today", compute timeMin as the start of today and timeMax as the end of today in Asia/Kolkata timezone.`,
+        content: `Current datetime: ${now}`,
       },
       {
         role: "user",
-        content: "Do i have any metting today check in my calendar data",
+        content: "Do i have any metting today ?",
       },
     ],
   });
