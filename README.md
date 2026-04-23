@@ -206,7 +206,7 @@ Response:
     "start": "2026-04-15T15:00:00+05:30",
     "end": "2026-04-15T15:45:00+05:30"
   },
-  "message": "Done. I scheduled it on your primary calendar."
+  "message": "Done. I scheduled it on your primary calendar without open you google calendar."
 }
 ```
 
