@@ -52,7 +52,7 @@ async function main() {
       },
       {
         role: "user",
-        content: "Do i have any metting today ?",
+        content: "Do i have any test event?",
       },
     ],
   });
