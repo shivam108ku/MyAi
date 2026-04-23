@@ -1,9 +1,15 @@
 import { ChatDeepSeek } from "@langchain/deepseek";
 import { createEventTool, getEventsTool } from "./tools";
-import { END, MessagesAnnotation, StateGraph } from "@langchain/langgraph";
+import {
+  END,
+  MemorySaver,
+  MessagesAnnotation,
+  StateGraph,
+} from "@langchain/langgraph";
 import { ToolNode } from "@langchain/langgraph/prebuilt";
 import type { AIMessage } from "@langchain/core/messages";
 import readline from "node:readline/promises";
+import { threadId } from "node:worker_threads";
 
 const tools: any = [createEventTool, getEventsTool];
 
@@ -40,13 +46,16 @@ const graph = new StateGraph(MessagesAnnotation)
     tools: "tools",
   });
 
-const app = graph.compile();
+const checkpointer = new MemorySaver();
+
+const app = graph.compile({checkpointer});
 
 async function main() {
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
   });
+  let config = {configurable: {thread_id: '1'}}
 
   while (true) {
     const userInput = await rl.question("You: ");
@@ -67,10 +76,13 @@ async function main() {
           content: userInput,
         },
       ],
-    });
+    },
+    config
+  );
 
     console.log("Ai: ", result.messages[result.messages.length - 1]?.content);
   }
+  rl.close();
 }
 
 main();
