@@ -22,7 +22,9 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@opentelemetry/sdk-node": "^0.215.0",
     "express": "^5.2.1",
-    "googleapis": "^171.4.0"
+    "googleapis": "^171.4.0",
+    "langfuse-langchain": "^3.38.20"
   }
 }
